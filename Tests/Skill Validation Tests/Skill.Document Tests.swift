@@ -164,7 +164,7 @@ extension Skill {
         struct `Edge Case` {
             @Test
             func `rejects descriptions over the byte limit`() {
-                let description = Swift.String(repeating: "x", count: 1_025)
+                let description = Swift::String(repeating: "x", count: 1_025)
                 #expect(throws: Skill.Error.descriptionIsTooLong) {
                     _ = try Skill.Document(
                         source: """

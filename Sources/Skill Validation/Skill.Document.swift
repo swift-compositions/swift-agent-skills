@@ -1,29 +1,12 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-agent-skills open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-agent-skills project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 extension Skill {
-    /// The canonical metadata and body of an agent skill.
     public struct Document: Equatable, Sendable {
-        public let name: Swift.String
-        public let description: Swift.String
-        public let body: Swift.String
+        public let name: Swift::String
+        public let description: Swift::String
+        public let body: Swift::String
 
-        /// Parses the deliberately small skill-document interface.
-        ///
-        /// Canonical frontmatter owns only `name` and `description`. Routing,
-        /// dependencies, and review history belong in the skill index, prose,
-        /// or version control rather than boot metadata.
         public init(
-            source: Swift.String,
-            expectedName: Swift.String? = nil
+            source: Swift::String,
+            expectedName: Swift::String? = nil
         ) throws(Skill.Error) {
             let lines = source.split(
                 omittingEmptySubsequences: false
@@ -47,9 +30,9 @@ extension Skill {
                 throw .invalidFrontmatter
             }
 
-            var fields = [Swift.String: Swift.String]()
+            var fields = [Swift::String: Swift::String]()
             var index = 1
-            var closingIndex: Swift.Int?
+            var closingIndex: Swift::Int?
             while index < lines.count {
                 let line = lines[index]
                 if line == "---" {
@@ -64,7 +47,7 @@ extension Skill {
                     throw .invalidFrontmatter
                 }
 
-                let key = Swift.String(line[..<separator])
+                let key = Swift::String(line[..<separator])
                 guard key == "name" || key == "description" else {
                     throw .invalidField(key)
                 }
@@ -76,7 +59,7 @@ extension Skill {
                 let value = Self.trimmingHorizontalWhitespace(remainder)
                 if value == "|" {
                     index += 1
-                    var continuation = [Swift.String]()
+                    var continuation = [Swift::String]()
                     while index < lines.count, lines[index] != "---" {
                         let continuationLine = lines[index]
                         guard continuationLine.isEmpty || continuationLine.hasPrefix("  ") else {
@@ -85,7 +68,7 @@ extension Skill {
                         continuation.append(
                             continuationLine.isEmpty
                                 ? ""
-                                : Swift.String(continuationLine.dropFirst(2))
+                                : Swift::String(continuationLine.dropFirst(2))
                         )
                         index += 1
                     }
@@ -96,7 +79,7 @@ extension Skill {
                 guard !value.isEmpty else {
                     throw .invalidFrontmatter
                 }
-                fields[key] = Swift.String(value)
+                fields[key] = Swift::String(value)
                 index += 1
             }
 
@@ -133,7 +116,7 @@ extension Skill {
             let bodyStart = closingIndex + 1
             let body =
                 bodyStart < lines.count
-                ? lines[bodyStart...].map(Swift.String.init).joined(separator: "\n")
+                ? lines[bodyStart...].map(Swift::String.init).joined(separator: "\n")
                 : ""
             guard !Self.trimmingWhitespace(body).isEmpty else {
                 throw .emptyBody
@@ -149,7 +132,7 @@ extension Skill {
 extension Skill.Document {
     private static let maximumLineCount = 500
 
-    private static func startsWithWhitespace(_ value: Substring) -> Swift.Bool {
+    private static func startsWithWhitespace(_ value: Substring) -> Swift::Bool {
         guard let first = value.first else { return false }
         return first == " " || first == "\t"
     }
@@ -173,8 +156,8 @@ extension Skill.Document {
     }
 
     private static func trimmingWhitespace(
-        _ value: Swift.String
-    ) -> Swift.String {
+        _ value: Swift::String
+    ) -> Swift::String {
         var start = value.startIndex
         var end = value.endIndex
         while start != end, isWhitespace(value[start]) {
@@ -185,17 +168,17 @@ extension Skill.Document {
             guard isWhitespace(value[preceding]) else { break }
             end = preceding
         }
-        return Swift.String(value[start..<end])
+        return Swift::String(value[start..<end])
     }
 
-    private static func isWhitespace(_ character: Swift.Character) -> Swift.Bool {
+    private static func isWhitespace(_ character: Swift::Character) -> Swift::Bool {
         character == " "
             || character == "\t"
             || character == "\n"
             || character == "\r"
     }
 
-    private static func isValid(name: Swift.String) -> Swift.Bool {
+    private static func isValid(name: Swift::String) -> Swift::Bool {
         guard
             (1...64).contains(name.utf8.count),
             name.first != "-",

@@ -1,32 +1,21 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-agent-skills open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-agent-skills project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 extension Skill {
-    public enum Error: Swift.Error, Equatable, Sendable {
+    public enum Error: Swift::Error, Equatable, Sendable {
         case descriptionContainsMarkup
         case descriptionIsEmpty
         case descriptionIsTooLong
-        case duplicateField(Swift.String)
+        case duplicateField(Swift::String)
         case emptyBody
-        case invalidField(Swift.String)
+        case invalidField(Swift::String)
         case invalidFrontmatter
-        case invalidName(Swift.String)
-        case mismatchedName(expected: Swift.String, actual: Swift.String)
-        case missingField(Swift.String)
-        case tooManyLines(actual: Swift.Int, maximum: Swift.Int)
+        case invalidName(Swift::String)
+        case mismatchedName(expected: Swift::String, actual: Swift::String)
+        case missingField(Swift::String)
+        case tooManyLines(actual: Swift::Int, maximum: Swift::Int)
     }
 }
 
 extension Skill.Error: CustomStringConvertible {
-    public var description: Swift.String {
+    public var description: Swift::String {
         switch self {
         case .descriptionContainsMarkup:
             "description must not contain angle-bracket markup"
