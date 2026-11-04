@@ -1,33 +1,14 @@
 # swift-agent-skills
 
-![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
+Use this package when you need to check that an agent-skill document meets the canonical contract before you load or publish it. Start from `Skill.Document`, and pass the skill's directory name as `expectedName` when you have one.
 
-Parsing and validating canonical agent-skill documents: closed YAML frontmatter carrying only `name` and `description`, a non-empty body, and the canonical limits.
+## Laws
 
-## Overview
-
-This package owns the agent-skill document contract for the Institute. `Skill.Document` parses a skill source and enforces the deliberately small interface:
-
-- frontmatter is a closed `---` block containing exactly `name` and `description` (scalar or block-literal), each at most once;
-- the name is 1–64 bytes of lowercase ASCII letters, digits, and interior hyphens, and must match the directory name when one is expected;
-- the description is non-empty after trimming, at most 1024 UTF-8 bytes, and free of angle-bracket markup;
-- the body is non-empty and the whole document stays within 500 lines.
-
-Every violation is a typed `Skill.Error` case with a human-readable description. Routing, dependencies, and review history belong in the skill index, prose, or version control — never in boot metadata — so no other fields exist.
-
-## Installation
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/swift-compositions/swift-agent-skills.git", branch: "main")
-]
-```
-
-## Usage
-
-```swift
-import Skill_Validation
-
-let document = try Skill.Document(source: source, expectedName: "example-skill")
-print(document.name, document.description)
-```
+- The document must open with a `---` line and close its frontmatter with another `---` line. Inside, every line is a field that starts in the first column. Blank or indented lines there are refused.
+- The frontmatter holds exactly `name` and `description`, each once. Any other field is refused, so routing or dependency metadata can't be added.
+- A value is either written on the field's line or given as a `|` block. A block's lines are indented by two spaces, which are removed, and the lines are joined with newlines. A block runs until the closing `---`, so it must be the last field.
+- A name is 1 to 64 bytes of lowercase ASCII letters, digits and hyphens, and doesn't start or end with a hyphen. When `expectedName` is given, the name must equal it exactly.
+- The description has surrounding whitespace trimmed before it is checked and stored. It must then be non-empty, at most 1024 UTF-8 bytes, and contain no `<` or `>`.
+- The body is everything after the closing `---` line. It must contain something other than whitespace, and is otherwise kept as written.
+- A document is at most 500 lines. A final newline doesn't start an extra line, so 500 lines followed by a newline is accepted.
+- CRLF and lone CR line endings count as line breaks. The body comes back with LF line endings.
