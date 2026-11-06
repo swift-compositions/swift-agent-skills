@@ -2,7 +2,9 @@ import Testing
 
 @testable import Skill_Validation
 
-extension Skill {
+enum `Skill Tests` {}
+
+extension `Skill Tests` {
     @Suite
     struct Test {
         @Suite
